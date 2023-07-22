@@ -1,25 +1,34 @@
-const express = require('express')
+import express from "express";
+import Joi from "joi";
+import contactsService, { contactsSchema } from "../../models/contacts.js"
+import isValidId from "../../middlewars/isValidid.js";
+import isEmptyBody from "../../middlewars/isEmptyBody.js";
+import validateBody from "../../decorators/validateBody.js";
+
+const contactsAddSchema = Joi.object({
+  name: Joi.string().required().messages({
+      "any.required": `"name" must be exist`,
+  }),
+  email: Joi.string().required().messages({
+    "any.required": `"email" must be exist`,
+}),
+phone: Joi.string().required().messages({
+  "any.required": `phone" must be exist`,
+}),
+})
 
 const router = express.Router()
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/',  contactsService.listContacts);
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/:id', isValidId, contactsService.getContactById);
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.post('/', isEmptyBody , validateBody(contactsAddSchema), contactsService.addContact)
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.delete('/:id', isValidId, contactsService.removeContact)
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.put('/:id', isValidId, validateBody(contactsAddSchema), contactsService.updateContact)
 
-module.exports = router
+router.patch("/:id/favorite", isValidId, isEmptyBody, validateBody(contactsAddSchema), contactsService.updateFavorite);
+
+export default router
