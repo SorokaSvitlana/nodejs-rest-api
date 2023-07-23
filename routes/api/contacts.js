@@ -14,7 +14,12 @@ const contactsAddSchema = Joi.object({
 }),
 phone: Joi.string().required().messages({
   "any.required": `phone" must be exist`,
-}),
+})
+})
+
+const updateFavoriteSchema = Joi.object({
+  favorite: Joi.boolean().required().messages({
+    "any.required": `favorite" must be exist`,})
 })
 
 const router = express.Router()
@@ -29,6 +34,6 @@ router.delete('/:id', isValidId, contactsService.removeContact)
 
 router.put('/:id', isValidId, validateBody(contactsAddSchema), contactsService.updateContact)
 
-router.patch("/:id/favorite", isValidId, isEmptyBody, validateBody(contactsAddSchema), contactsService.updateFavorite);
+router.patch("/:id/favorite", isValidId, isEmptyBody, validateBody(updateFavoriteSchema), contactsService.updateFavorite);
 
 export default router
