@@ -1,6 +1,6 @@
 import express from "express";
 import Joi from "joi";
-import contactsService, { contactsSchema } from "../../models/contacts.js"
+import contactsService from "../../conrtollers/contacts-controller.js"
 import isValidId from "../../middlewars/isValidid.js";
 import isEmptyBody from "../../middlewars/isEmptyBody.js";
 import validateBody from "../../decorators/validateBody.js";
