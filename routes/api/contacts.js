@@ -3,16 +3,15 @@ import Joi from "joi";
 import { HttpError } from "../../helpers/index.js";
 import contactsService from "../../models/contacts.js"
 const contactsAddSchema = Joi.object({
-  name: Joi.string().required().messages({
-      "any.required": `"name" must be exist`,
-  }),
-  email: Joi.string().required().messages({
-    "any.required": `"email" must be exist`,
-}),
-phone: Joi.string().required().messages({
-  "any.required": `phone" must be exist`,
-}),
-})
+    name: Joi.string().required(),
+    email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net"] },
+    }).required(),
+  phone: Joi.string().pattern(/^\(\d{3}\) \d{3}-\d{4}$/).required().messages({
+    "validation": `phone" example "(692) 802-2949"`,})
+  })
 
 const router = express.Router()
 
