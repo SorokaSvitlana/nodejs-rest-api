@@ -7,12 +7,9 @@ import authenticate from "../../middlewars/authenticate.js";
 
 const authRouter = express.Router();
 
-authRouter.post("/signup", validateBody(usersSchemas.userSignupSchema), authController.signup)
-
-authRouter.post("/signin", validateBody(usersSchemas.userSigninSchema), authController.signin)
-
-authRouter.get("/current", authenticate, authController.getCurrent);
-
-authRouter.post("/signout", authenticate, authController.signout);
+authRouter.post("/register", validateBody(usersSchemas.userSignupSchema), authController.register)
+authRouter.post("/login", validateBody(usersSchemas.userSigninSchema), authController.login)
+authRouter.post("/logout", authenticate, authController.logout);
+authRouter.get("/current", authenticate, authController.getCurrentUser);
 
 export default authRouter;

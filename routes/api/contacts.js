@@ -7,19 +7,14 @@ import { contactsAddSchema, updateFavoriteSchema } from "../../Schema/contactSch
 import authenticate from "../../middlewars/authenticate.js";
 
 
-const router = express.Router()
-router.use(authenticate);
+const routerContacts = express.Router()
+routerContacts.use(authenticate);
 
-router.get('/',  contactsService.listContacts);
+routerContacts.get('/',  contactsService.listContacts);
+routerContacts.get('/:id', isValidId, contactsService.getContactById);
+routerContacts.post('/', isEmptyBody , validateBody(contactsAddSchema), contactsService.addContact)
+routerContacts.delete('/:id', isValidId, contactsService.removeContact)
+routerContacts.put('/:id', isValidId, validateBody(contactsAddSchema), contactsService.updateContact)
+routerContacts.patch("/:id/favorite", isValidId, isEmptyBody, validateBody(updateFavoriteSchema), contactsService.updateFavorite);
 
-router.get('/:id', isValidId, contactsService.getContactById);
-
-router.post('/', isEmptyBody , validateBody(contactsAddSchema), contactsService.addContact)
-
-router.delete('/:id', isValidId, contactsService.removeContact)
-
-router.put('/:id', isValidId, validateBody(contactsAddSchema), contactsService.updateContact)
-
-router.patch("/:id/favorite", isValidId, isEmptyBody, validateBody(updateFavoriteSchema), contactsService.updateFavorite);
-
-export default router
+export default routerContacts
