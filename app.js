@@ -3,6 +3,7 @@ import logger from "morgan";
 import cors from "cors";
 import authRouter from "./routes/api/auth-router.js";
 import routerContacts from "./routes/api/contacts.js";
+import usersRouter from "./routes/api/users.js";
 
 const app = express()
 
@@ -14,6 +15,8 @@ app.use(express.json())
 
 app.use("/api/auth", authRouter)
 app.use('/api/contacts', routerContacts)
+app.use('/api/users', usersRouter)
+app.use(express.static("public"))
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' })
