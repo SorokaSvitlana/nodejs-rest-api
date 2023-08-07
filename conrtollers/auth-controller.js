@@ -3,29 +3,38 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import ctrlWrapper  from "../decorators/ctrlWrapper.js";
 import  HttpError  from "../helpers/HttpError.js";
+import fs from "fs/promises";
+import path from "path";
+import gravatar from "gravatar";
+
+const avatarPath = path.resolve("public", "avatars");
 
 const {JWT_SECRET} = process.env;
 
-const register = async(req, res)=> {
-  const {email, password} = req.body;
-    if (!email || !password) {
-        throw HttpError(400, "Email and password are required");
-      }
-  const user = await User.findOne({email});
-    if(user) {
-        throw HttpError(409, "Email in use");
-    }
-  
+const register = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw HttpError(400, "Email and password are required");
+  }
+  const user = await User.findOne({ email });
+  if (user) {
+    throw HttpError(409, "Email in use");
+  }
+
   const hashPassword = await bcrypt.hash(password, 10);
-    
-  const newUser = await User.create({...req.body, password: hashPassword});
+  const { path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarPath, filename);
+  await fs.rename(oldPath, newPath);
+  const avatar = path.join("public", "avatars", filename);
 
+  const newUser = await User.create({ ...req.body, avatar, password: hashPassword });
+  const avatarURL = gravatar.url(email, { s: "200", d: "identicon" });
   res.status(201).json({
-        subscription: newUser.subscription,
-        email: newUser.email,
-  })
-}
-
+    subscription: newUser.subscription,
+    email: newUser.email,
+    avatar,
+  });
+};
 const login = async(req, res) => {
   const {email, password} = req.body;
     if (!email || !password) {
